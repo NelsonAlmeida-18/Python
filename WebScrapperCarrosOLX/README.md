@@ -1,4 +1,4 @@
-Scrapper de Carros OLX
+# Scrapper de Anúncios de Carros OLX
 
 Desenvolvi este projeto usando libraries como beautifullSoup e Twilio para enviar mensagens para o meu número de telemóvel com anúncios de carros publicados.
 
