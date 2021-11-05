@@ -15,12 +15,42 @@ class pomodoro:
             quit()
 
     def launchpomodoro(self):
-        timeofwork = input("Tempo de T&rabalho:")
+        timeofwork = input("Tempo de Trabalho:")
         timeofrest = input("Tempo de Descanso:")
         intervals = input("Número de intervalos:")
-        self.timer(int(timeofwork),int(timeofrest), int(intervals))
+        num_of_iterations = 0
+        while num_of_iterations<int(intervals):
+            (limithour, limitminutes, current_seconds)=self.timer(int(timeofwork))
+            self.processChecker(limithour,limitminutes,current_seconds)
+            print("Acabou o tempo de Trabalho")
+            self.rest(int(timeofrest))
+            print("Acabou o tempo de descanso")
+            num_of_iterations+=1
+            print("Acabou um ciclo")
 
-    def timer(self, timeofwork,timeofrest,intervals):
+    def rest(self, timeofrest):
+        temp_time = datetime.now().time()
+        temp_time = str(temp_time).split(":")
+        current_hour= temp_time[0]
+        current_minutes = temp_time[1]
+        current_seconds = temp_time[2]
+        #tirar os milisegundos
+        current_seconds = current_seconds.split(".")
+        current_seconds = current_seconds[0]
+
+        (limithour, limitminutes, limitseconds) = self.timer(int(timeofrest))
+        while(int(current_hour)<=int(limithour) or int(current_minutes)<=int(limitminutes) or int(current_seconds)<=int(limitseconds)):
+            temp_time = datetime.now().time()
+            temp_time = str(temp_time).split(":")
+            current_hour= temp_time[0]
+            current_minutes = temp_time[1]
+            current_seconds = temp_time[2]
+            #tirar os milisegundos
+            current_seconds = current_seconds.split(".")
+            current_seconds = current_seconds[0]
+
+
+    def timer(self, timeofwork):
         temp_time = datetime.now().time()
         temp_time = str(temp_time).split(":")
         current_hour= temp_time[0]
@@ -31,8 +61,7 @@ class pomodoro:
         current_seconds = current_seconds[0]
 
         (limithour, limitminutes) = self.timeAfterWork(int(current_hour), int(current_minutes), int(current_seconds), int(timeofwork))
-
-        self.processChecker(limithour,limitminutes,current_seconds)
+        return (limithour, limitminutes, current_seconds)
 
     def timeAfterWork(self, current_hour, current_minutes, current_seconds, time_of_work):
         limithour=current_hour
@@ -53,10 +82,15 @@ class pomodoro:
         current_minutes = int(temp_time[1])
         current_seconds = temp_time[2]
         current_seconds = int(current_seconds.split(".")[0])
-        while(current_hour<limit_hour and current_minutes<current_seconds and current_seconds<limit_seconds):
-            for proc in psutil.process_iter(['pid', 'name', 'username']):
-                 print(proc.info)
-
-
+        while(current_hour<=int(limit_hour) or current_minutes<=int(limit_minutes) or current_seconds<=int(limit_seconds)):
+            temp_time = datetime.now().time()
+            temp_time = str(temp_time).split(":")
+            current_hour= int(temp_time[0])
+            current_minutes = int(temp_time[1])
+            current_seconds = temp_time[2]
+            current_seconds = int(current_seconds.split(".")[0])
+            for proc in psutil.process_iter():
+                 if "chrome" in proc.name()or "discord" in proc.name():
+                     proc.kill()
 
 pomodoro()  
